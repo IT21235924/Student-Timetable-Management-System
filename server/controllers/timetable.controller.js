@@ -17,75 +17,78 @@ export const createTimetable = async (req, res) => {
 //Assign Course to the session
 export const assignCourse = async (req, res) => {
   try {
-
-    const timetableId = req.params.timetableId
+    const timetableId = req.params.timetableId;
     const sessionId = req.params.sessionId;
     const courseId = req.params.courseId;
 
-    //validate session and course ids
+    // Validate session and course IDs
     if (!mongoose.Types.ObjectId.isValid(timetableId) || !mongoose.Types.ObjectId.isValid(courseId)) {
       return res.status(400).json({ error: 'Invalid ID(s)' });
-    } else {
-
-      //Retrieve course name
-      const course = await Course.findById(courseId);
-
-      let timetable = await TimeTable.findById(timetableId);
-
-      if (!course) {
-        return res.status(404).json({ error: 'Course not found' });
-      } else {
-        const sessionindex = timetable.sessions.findIndex(
-          (session) => session._id.equals(sessionId)
-        );
-        if (sessionindex === -1) {
-          return "Class session does not exist in the timetable";
-        }
-
-        timetable.sessions[sessionindex].course = course._id;
-        timetable.sessions[sessionindex].courseName = course.name;
-
-        // Save the updated timetable
-        await timetable.save();
-
-        console.log("Timetable updated successfully");
-        return "Timetable updated successfully";
-      }
     }
+
+    // Retrieve course details (including name)
+    const course = await Course.findById(courseId).select('name'); // Select only the 'name' field
+
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    // Find the timetable and session
+    let timetable = await TimeTable.findById(timetableId);
+    if (!timetable) {
+      return res.status(404).json({ error: 'Timetable not found' });
+    }
+
+    const sessionIndex = timetable.sessions.findIndex(session => session._id.equals(sessionId));
+    if (sessionIndex === -1) {
+      return res.status(404).json({ error: 'Class session does not exist in the timetable' });
+    }
+
+    // Update the session with course details
+    timetable.sessions[sessionIndex].course = course._id;
+    timetable.sessions[sessionIndex].courseName = course.name;
+
+    // Save the updated timetable and return a success message
+    await timetable.save();
+
+    return res.status(200).json({ message: 'Course assigned successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-// export const createTimetable = async (req, res) => {
-//   try {
-//     const courseId = req.params.courseId;
+//Delete  Class session by id
+export const deleteClassSession = async (req, res) => {
+  try {
+    const classSessionId = req.params.classSessionId;
 
-//     // Validate course and faculty IDs
-//     if (!mongoose.Types.ObjectId.isValid(courseId)) {
-//       return res.status(400).json({ error: 'Invalid course ID' });
-//     }
+    if (!mongoose.Types.ObjectId.isValid(classSessionId)) {
+      return res.status(400).json({ error: 'Invalid Class Session ID' });
+    }
 
-//     const course = await Course.findById(courseId);
-//     if (!course) {
-//       return res.status(404).json({ error: 'Course not found' });
-//     }
+    const timetable = await TimeTable.findByIdAndUpdate(
+      req.params.timetableId, // Modify the timetable based on the provided ID
+      { $pull: { sessions: { _id: classSessionId } } }, // Remove the session using the pull operator
+      { new: true } // Return the updated timetable
+    );
 
-//     // Create the new timetable
-//     const newTimetable = new TimeTable({
-//       ...req.body,  // Include all remaining fields from the request body
-//       course: course._id,
-//       courseName: course.name,
-//     });
+    if (!timetable) {
+      return res.status(404).json({ error: 'Timetable not found' });
+    }
 
-//     await newTimetable.save();
-//     res.status(201).json(newTimetable);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// };
+    if (!timetable.sessions.find(session => session._id.equals(classSessionId))) {
+      return res.status(404).json({ error: 'Class Session not found in the timetable' });
+    }
+
+    res.status(200).json({ message: 'Class Session deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
 
 //Get Weekly Time Table by Date
 export const getTimetableByDate = async (req, res) => {
