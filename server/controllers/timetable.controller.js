@@ -73,14 +73,6 @@ export const deleteClassSession = async (req, res) => {
       { new: true } // Return the updated timetable
     );
 
-    if (!timetable) {
-      return res.status(404).json({ error: 'Timetable not found' });
-    }
-
-    if (!timetable.sessions.find(session => session._id.equals(classSessionId))) {
-      return res.status(404).json({ error: 'Class Session not found in the timetable' });
-    }
-
     res.status(200).json({ message: 'Class Session deleted successfully' });
   } catch (err) {
     console.error(err);
