@@ -158,6 +158,37 @@ export const updateSession = async (req, res) => {
   }
 };
 
+//Update Timetable
+export const updateTimetable = async (req, res) => {
+  try {
+    const timetableId = req.params.timetableId;
+    const { week, date } = req.body; // Destructure updated properties
+
+    // Validate timetable ID
+    if (!mongoose.Types.ObjectId.isValid(timetableId)) {
+      return res.status(400).json({ error: 'Invalid timetable ID' });
+    }
+
+    // Find the timetable
+    const timetable = await TimeTable.findById(timetableId);
+    if (!timetable) {
+      return res.status(404).json({ error: 'Timetable not found' });
+    }
+
+    // Update the week and date (optional validation)
+    timetable.week = week;
+    timetable.date = date;
+
+    // Save the updated timetable
+    await timetable.save();
+
+    res.status(200).json({ message: 'Timetable updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 //Delete  Class session by id
 export const deleteClassSession = async (req, res) => {
   try {
