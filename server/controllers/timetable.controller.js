@@ -58,6 +58,27 @@ export const assignCourse = async (req, res) => {
   }
 };
 
+//Find Timetable using week
+export const getTimetablesByWeek = async (req, res) => {
+  try {
+    const week = parseInt(req.params.week); // Parse the week parameter as an integer
+    if (isNaN(week)) {
+      return res.status(400).json({ error: 'Invalid week parameter' });
+    }
+
+    const timetables = await TimeTable.find({ week });
+
+    if (!timetables.length) {
+      return res.status(204).json({ message: 'No timetables found for this week' });
+    }
+
+    res.status(200).json({ timetables });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 //Delete  Class session by id
 export const deleteClassSession = async (req, res) => {
   try {
