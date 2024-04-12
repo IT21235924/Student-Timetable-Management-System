@@ -1,6 +1,6 @@
 import express from 'express'
 import protectRoute from '../utils/protectRoute.js'
-import {createTimetable, assignCourse, deleteClassSession, getTimetablesByWeek, createSession} from '../controllers/timetable.controller.js'
+import {createTimetable, assignCourse, deleteClassSession, getTimetablesByWeek, createSession, updateSession} from '../controllers/timetable.controller.js'
 
 const router = express.Router()
 
@@ -16,7 +16,10 @@ router.put('/:timetableId/:sessionId/assignCourse/:courseId', protectRoute, assi
 //Find Timetable by week
 router.get("/timetables/week/:week", getTimetablesByWeek);
 
-//Delete Class sessions
+//Update Session
+router.put("/timetables/:timetableId/sessions/:sessionId", updateSession);
+
+//Delete Class sessions by id
 router.delete("/:timetableId/class-sessions/:classSessionId", protectRoute, deleteClassSession);
 
 

@@ -115,6 +115,49 @@ export const getTimetablesByWeek = async (req, res) => {
   }
 };
 
+//Update Session
+export const updateSession = async (req, res) => {
+  try {
+    const timetableId = req.params.timetableId;
+    const sessionId = req.params.sessionId;
+    const { time, location } = req.body; // Destructure updated session data
+
+    // Validate timetable ID and session ID
+    if (!mongoose.Types.ObjectId.isValid(timetableId) || !mongoose.Types.ObjectId.isValid(sessionId)) {
+      return res.status(400).json({ error: 'Invalid timetable ID or session ID' });
+    }
+
+    // Find the timetable
+    const timetable = await TimeTable.findById(timetableId);
+    if (!timetable) {
+      return res.status(404).json({ error: 'Timetable not found' });
+    }
+
+    // Find the session index using the populated sessions array (optional)
+    const sessionIndex = timetable.sessions.findIndex(session => session._id.equals(sessionId));
+
+    // Check if session exists
+    if (sessionIndex === -1) {
+      return res.status(404).json({ error: 'Session not found in the timetable' });
+    }
+
+    // Update the session details
+    timetable.sessions[sessionIndex] = {
+      ...timetable.sessions[sessionIndex], // Preserve existing properties
+      time,
+      location,
+    };
+
+    // Save the updated timetable
+    await timetable.save();
+
+    res.status(200).json({ message: 'Session updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 //Delete  Class session by id
 export const deleteClassSession = async (req, res) => {
   try {
@@ -132,59 +175,6 @@ export const deleteClassSession = async (req, res) => {
 
     res.status(200).json({ message: 'Class Session deleted successfully' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
-
-
-//Get Weekly Time Table by Date
-export const getTimetableByDate = async (req, res) => {
-  try {
-    const timetable = await TimeTable.findOne({ date: req.params.date })
-      .populate('sessions.course sessions.faculty'); // Populate course and faculty details (optional)
-    if (!timetable) {
-      return res.status(404).json({ error: 'Timetable not found' });
-    }
-    res.status(200).json(timetable);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
-// Update Time table
-export const updateTimetable = async (req, res) => {
-  try {
-    const updatedTimetable = await TimeTable.findOneAndUpdate(
-      { date: req.params.date },
-      req.body,
-      { new: true } // Return the updated document
-    );
-    if (!updatedTimetable) {
-      return res.status(404).json({ error: 'Timetable not found' });
-    }
-    res.status(200).json(updatedTimetable);
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: err.message });
-  }
-};
-
-//Delete time table 
-export const deleteTimetable = async (req, res) => {
-  try {
-    const deletedTimetable = await TimeTable.findOneAndDelete({ date: req.params.date });
-    if (!deletedTimetable) {
-      return res.status(404).json({ error: 'Timetable not found' });
-    }
-    res.status(200).json({ message: 'Timetable deleted' });
-  } catch (err) {
-    // Handle potential errors more specifically
-    if (err.name === 'CastError') {
-      return res.status(400).json({ error: 'Invalid date format' });
-    }
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
