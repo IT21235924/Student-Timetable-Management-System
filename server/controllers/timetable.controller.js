@@ -14,6 +14,42 @@ export const createTimetable = async (req, res) => {
   }
 };
 
+//Create session in timtable
+export const createSession = async (req, res) => {
+  try {
+    const timetableId = req.params.timetableId;
+    const { time, location } = req.body;
+
+    // Validate timetable ID
+    if (!mongoose.Types.ObjectId.isValid(timetableId)) {
+      return res.status(400).json({ error: 'Invalid timetable ID' });
+    }
+
+    // Find the timetable
+    const timetable = await TimeTable.findById(timetableId);
+    if (!timetable) {
+      return res.status(404).json({ error: 'Timetable not found' });
+    }
+
+    // Create a new session object
+    const newSession = {
+      time,
+      location,
+    };
+
+    // Add the new session to the timetable's sessions array
+    timetable.sessions.push(newSession);
+
+    // Save the updated timetable
+    await timetable.save();
+
+    res.status(201).json({ message: 'Session created successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 //Assign Course to the session
 export const assignCourse = async (req, res) => {
   try {
@@ -26,7 +62,7 @@ export const assignCourse = async (req, res) => {
       return res.status(400).json({ error: 'Invalid ID(s)' });
     }
 
-    // Retrieve course details (including name)
+    // Retrieve course details
     const course = await Course.findById(courseId).select('name'); // Select only the 'name' field
 
     if (!course) {
