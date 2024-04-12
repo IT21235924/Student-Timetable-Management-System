@@ -211,3 +211,23 @@ export const deleteClassSession = async (req, res) => {
   }
 };
 
+//Delete Timetable 
+export const deleteTimetable = async (req, res) => {
+  try {
+    const timetableId = req.params.timetableId;
+
+    // Validate timetable ID
+    if (!mongoose.Types.ObjectId.isValid(timetableId)) {
+      return res.status(400).json({ error: 'Invalid timetable ID' });
+    }
+
+    // Find and delete the timetable
+    await TimeTable.findByIdAndDelete(timetableId);
+
+    res.status(204).json({ message: 'Timetable deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
