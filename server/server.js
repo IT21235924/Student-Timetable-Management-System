@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes.js'
 import courseRoutes from './routes/course.routes.js'
 import facultyRoutes from './routes/faculty.routes.js'
 import timeTableRoutes from './routes/timeTable.routes.js'
+import classRoomRoutes from './routes/classroom.routes.js'
 
 import connectToMongoDB from './db/connectToMongoDB.js'
 
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/faculty', facultyRoutes)
 app.use('/api/timetable', timeTableRoutes)
+app.use('/api/classroom', classRoomRoutes)
 
 app.listen(PORT, () => {
     connectToMongoDB()
