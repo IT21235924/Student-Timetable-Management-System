@@ -1,6 +1,6 @@
 import express from 'express'
 import protectRoute from '../utils/protectRoute.js'
-import {createClassroom, getAllClassrooms, getClassroomByNumber, getAvailableClassrooms, updateClassroom} from '../controllers/classroom.controller.js'
+import {createClassroom, getAllClassrooms, getClassroomByNumber, getAvailableClassrooms, updateClassroom, deleteClassroom, bookClassroom} from '../controllers/classroom.controller.js'
 
 const router = express.Router()
 
@@ -18,5 +18,11 @@ router.get("/available", getAvailableClassrooms);
 
 //Update classroom
 router.put("/:id", updateClassroom);
+
+//delete classrrom
+router.delete("/:id", deleteClassroom);
+
+//Book classroom
+router.put("/:id/book", bookClassroom);
 
 export default router

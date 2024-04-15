@@ -84,3 +84,48 @@ export const createClassroom = async (req, res) => {
       res.status(500).json({ error: "Server error" });
     }
   };
+
+  //delete classrrom
+  export const deleteClassroom = async (req, res) => {
+    try {
+      const classroomId = req.params.id;
+  
+      const classroom = await Classroom.findOneAndDelete({ _id: classroomId });
+      if (!classroom) {
+        return res.status(404).json({ error: "Classroom not found" });
+      }
+  
+      res.status(200).json({ message: "Classroom deleted successfully" });
+    } catch (err) {
+      console.error(err);
+      // Handle potential errors like deletion failures
+      if (err.code === 400) { // Mongoose cast error (e.g., invalid classroom number)
+        return res.status(400).json({ error: "Invalid classroom number" });
+      }
+      res.status(500).json({ error: "Server error" });
+    }
+  };
+
+  //Book classroom
+  export const bookClassroom = async (req, res) => {
+    try {
+      const classroomId = req.params.id;
+  
+      const classroom = await Classroom.findOne({ _id: classroomId });
+      if (!classroom) {
+        return res.status(404).json({ error: "Classroom not found" });
+      }
+  
+      if (!classroom.Availability) {
+        return res.status(409).json({ error: "Classroom is already booked" });
+      }
+  
+      classroom.Availability = false; // Update availability
+      await classroom.save();
+  
+      res.status(200).json({ message: "Classroom booked successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  };
