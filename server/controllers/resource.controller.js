@@ -57,3 +57,50 @@ export const addResource = async (req, res) => {
       res.status(500).json({ error: "Server error" });
     }
   };
+
+  //update quantity
+  export const updateResourceQuantity = async (req, res) => {
+    try {
+      const resourceId = req.params.id;
+      const { amount } = req.body;
+  
+      const resource = await Resource.findById(resourceId);
+      if (!resource) {
+        return res.status(404).json({ error: "Resource not found" });
+      }
+  
+      resource.quantity = resource.quantity + amount;
+
+      resource.available = resource.available + amount;
+  
+      await resource.save();
+      res.status(200).json({ message: "Resource quantity updated successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  };
+
+  //book resource
+  export const bookResource = async (req, res) => {
+    try{
+        const resourceId = req.params.id;
+        const { amount } = req.body;
+
+        const resource = await Resource.findById(resourceId);
+
+        if(!resource) {
+            return res.status(404).json({error: "Resource not found" });
+        }
+
+        resource.booked = resource.booked + amount;
+        resource.available = resource.available - amount;
+
+        await resource.save();
+        res.status(200).json({ message: "Resource quantity updated successfully" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+  }
