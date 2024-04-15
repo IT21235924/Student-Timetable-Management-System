@@ -1,6 +1,6 @@
 import express from 'express'
 import protectRoute from '../utils/protectRoute.js'
-import {addResource, getAllResources, getResourcesByType, deleteResource, updateResourceQuantity, bookResource} from '../controllers/resource.controller.js'
+import {addResource, getAllResources, getResourcesByType, deleteResource, updateResourceQuantity, bookResource, releaseResource} from '../controllers/resource.controller.js'
 
 const router = express.Router()
 
@@ -21,5 +21,8 @@ router.put("/:id/quantity", updateResourceQuantity);
 
 //book
 router.put("/:id/book", bookResource);
+
+//release
+router.put("/:id/release", releaseResource);
 
 export default router
