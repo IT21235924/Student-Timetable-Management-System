@@ -20,10 +20,6 @@ export const createCourse = async (req, res) => {
 // Get all courses
 export const getCourses = async (req, res) => {
   try {
-    // const userRole = req.user.role
-    // if(userRole != "Admin"){
-    //   return res.status(500).json({error: 'Unauthorized'})
-    // }
     const courses = await Course.find();
     res.status(200).json(courses);
   } catch (err) {

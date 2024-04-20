@@ -5,24 +5,24 @@ import {createClassroom, getAllClassrooms, getClassroomByNumber, getAvailableCla
 const router = express.Router()
 
 //Create new classroom
-router.post("/", createClassroom);
+router.post("/",protectRoute, createClassroom);
 
 //get all classrooms
-router.get("/", getAllClassrooms);
+router.get("/",protectRoute, getAllClassrooms);
 
 //Get class rooms by number
-router.get("/:number", getClassroomByNumber);
+router.get("/:number",protectRoute, getClassroomByNumber);
 
 //Get available classrooms
-router.get("/available", getAvailableClassrooms);
+router.get("/available",protectRoute, getAvailableClassrooms);
 
 //Update classroom
-router.put("/:id", updateClassroom);
+router.put("/:id",protectRoute, updateClassroom);
 
 //delete classrrom
-router.delete("/:id", deleteClassroom);
+router.delete("/:id",protectRoute, deleteClassroom);
 
 //Book classroom
-router.put("/:id/book", bookClassroom);
+router.put("/:id/book",protectRoute, bookClassroom);
 
 export default router

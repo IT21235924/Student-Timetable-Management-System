@@ -1,13 +1,27 @@
 import Classroom from '../models/classRoom.model.js'
+import Notification from '../models/notification.model.js';
 
 //Create new classroom
 export const createClassroom = async (req, res) => {
     try {
+
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }    
+
       const { type, number, Capacity } = req.body;
   
       const newClassroom = new Classroom({ type, number, Capacity });
   
       await newClassroom.save();
+
+      //Notification 
+      const message = "Classroom created successfully";
+      const newNotification = new Notification({message});
+      await newNotification.save();
+
+
       res.status(201).json({ message: "Classroom created successfully" });
     } catch (err) {
       console.error(err);
@@ -19,9 +33,14 @@ export const createClassroom = async (req, res) => {
     }
   };
 
+
   //get all classrooms
   export const getAllClassrooms = async (req, res) => {
     try {
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
       const classrooms = await Classroom.find();
       res.status(200).json(classrooms);
     } catch (err) {

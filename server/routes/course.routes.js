@@ -8,10 +8,10 @@ const router = express.Router()
 router.post('/create',protectRoute, createCourse);
 
 // Get all courses
-router.get('/',protectRoute, getCourses);
+router.get('/', getCourses);
 
 // Get a single course by ID
-router.get('/:id',protectRoute, getCourseById);
+router.get('/:id', getCourseById);
 
 // Update a course by ID
 router.put('/:id',protectRoute, updateCourse);

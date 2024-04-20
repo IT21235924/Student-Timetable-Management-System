@@ -1,5 +1,6 @@
 import TimeTable from '../models/timeTable.model.js'
 import Course from '../models/course.model.js';
+import Notification from '../models/notification.model.js';
 import mongoose from 'mongoose';
 
 //Create Weekly Time table 
@@ -64,6 +65,7 @@ export const assignCourse = async (req, res) => {
 
     // Retrieve course details
     const course = await Course.findById(courseId).select('name'); // Select only the 'name' field
+    const courseCode = await Course.findById(courseId).select('code');
 
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });
@@ -86,6 +88,12 @@ export const assignCourse = async (req, res) => {
 
     // Save the updated timetable and return a success message
     await timetable.save();
+
+    //Notification 
+    const message = "Session assigned for " + course.name + "(" + courseCode.code + ")";
+    const newNotification = new Notification({message});
+    await newNotification.save();
+
 
     return res.status(200).json({ message: 'Course assigned successfully' });
   } catch (err) {
