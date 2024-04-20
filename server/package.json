@@ -7,6 +7,11 @@
     "start": "nodemon server.js",
     "test": "jest"
   },
+  "jest": {
+    "testMatch": [
+      "**/*.test.mjs"
+    ]
+  },
   "type": "module",
   "keywords": [],
   "author": "",
