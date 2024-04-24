@@ -5,6 +5,7 @@ import Notification from '../models/notification.model.js';
 export const createClassroom = async (req, res) => {
     try {
 
+      //validate admin
       const userRole = req.user.role
       if(userRole != "Admin"){
         return res.status(500).json({error: 'Unauthorized'})
@@ -25,7 +26,7 @@ export const createClassroom = async (req, res) => {
       res.status(201).json({ message: "Classroom created successfully" });
     } catch (err) {
       console.error(err);
-      // Handle potential errors like duplicate classroom number (unique constraint)
+      
       if (err.code === 11000) {
         return res.status(400).json({ error: "Classroom number already exists" });
       }
@@ -36,6 +37,8 @@ export const createClassroom = async (req, res) => {
 
   //get all classrooms
   export const getAllClassrooms = async (req, res) => {
+
+    //validate admin
     try {
       const userRole = req.user.role
       if(userRole != "Admin"){
@@ -52,6 +55,13 @@ export const createClassroom = async (req, res) => {
   //Get class rooms by number
   export const getClassroomByNumber = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const classroomNumber = req.params.number;
   
       const classroom = await Classroom.findOne({ number: classroomNumber });
@@ -68,6 +78,13 @@ export const createClassroom = async (req, res) => {
   //Get available classrooms
   export const getAvailableClassrooms = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       console.log('Querying available classrooms...');
       const availableClassrooms = await Classroom.find({ Availability: true });
       console.log('Available classrooms:', availableClassrooms);
@@ -85,6 +102,13 @@ export const createClassroom = async (req, res) => {
   //Update classroom
   export const updateClassroom = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const classroomID = req.params.id;
       const { type, Capacity, Availability } = req.body;
   
@@ -107,6 +131,13 @@ export const createClassroom = async (req, res) => {
   //delete classrrom
   export const deleteClassroom = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const classroomId = req.params.id;
   
       const classroom = await Classroom.findOneAndDelete({ _id: classroomId });
@@ -117,8 +148,8 @@ export const createClassroom = async (req, res) => {
       res.status(200).json({ message: "Classroom deleted successfully" });
     } catch (err) {
       console.error(err);
-      // Handle potential errors like deletion failures
-      if (err.code === 400) { // Mongoose cast error (e.g., invalid classroom number)
+      
+      if (err.code === 400) { 
         return res.status(400).json({ error: "Invalid classroom number" });
       }
       res.status(500).json({ error: "Server error" });
@@ -128,6 +159,13 @@ export const createClassroom = async (req, res) => {
   //Book classroom
   export const bookClassroom = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const classroomId = req.params.id;
   
       const classroom = await Classroom.findOne({ _id: classroomId });

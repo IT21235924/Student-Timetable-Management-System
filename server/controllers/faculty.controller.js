@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 //Create a new faculty
 export const createFaculty = async (req, res) => {
     try {
+
+        //validate admin
         const userRole = req.user.role
         if (userRole != "Admin") {
             return res.status(500).json({ error: 'Unauthorized' })
@@ -23,6 +25,7 @@ export const createFaculty = async (req, res) => {
 export const assignFaculty = async (req, res) => {
     try {
 
+        //validate admin
         const userRole = req.user.role
         if (userRole != "Admin") {
             return res.status(500).json({ error: 'Unauthorized' })
@@ -46,7 +49,7 @@ export const assignFaculty = async (req, res) => {
         const course = await Course.findByIdAndUpdate(
             courseId,
             {
-                faculty: faculty._id, // Use the faculty's _id (usually an ObjectId)
+                faculty: faculty._id, // Use the faculty's ID
                 facultyName: faculty.name, // Add a separate field for the name
             },
             { new: true }

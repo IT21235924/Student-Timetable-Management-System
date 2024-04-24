@@ -3,6 +3,13 @@ import Resource from "../models/resource.model.js";
 //Create
 export const addResource = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const { type, quantity } = req.body;
   
       const newResource = new Resource({ type, quantity });
@@ -18,6 +25,13 @@ export const addResource = async (req, res) => {
   //get all
   export const getAllResources = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const resources = await Resource.find();
       res.status(200).json(resources);
     } catch (err) {
@@ -29,6 +43,13 @@ export const addResource = async (req, res) => {
   //get by type
   export const getResourcesByType = async (req, res) => {
     try {
+
+      //validate admin
+      const userRole = req.user.role
+      if(userRole != "Admin"){
+        return res.status(500).json({error: 'Unauthorized'})
+      }
+
       const resourceType = req.params.type;
   
       const resources = await Resource.find({ type: resourceType });

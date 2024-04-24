@@ -128,7 +128,7 @@ export const updateSession = async (req, res) => {
   try {
     const timetableId = req.params.timetableId;
     const sessionId = req.params.sessionId;
-    const { time, location } = req.body; // Destructure updated session data
+    const { time, location } = req.body;
 
     // Validate timetable ID and session ID
     if (!mongoose.Types.ObjectId.isValid(timetableId) || !mongoose.Types.ObjectId.isValid(sessionId)) {
@@ -141,7 +141,7 @@ export const updateSession = async (req, res) => {
       return res.status(404).json({ error: 'Timetable not found' });
     }
 
-    // Find the session index using the populated sessions array (optional)
+    // Find the session index using the sessions array 
     const sessionIndex = timetable.sessions.findIndex(session => session._id.equals(sessionId));
 
     // Check if session exists
@@ -183,7 +183,7 @@ export const updateTimetable = async (req, res) => {
       return res.status(404).json({ error: 'Timetable not found' });
     }
 
-    // Update the week and date (optional validation)
+    // Update the week and date
     timetable.week = week;
     timetable.date = date;
 

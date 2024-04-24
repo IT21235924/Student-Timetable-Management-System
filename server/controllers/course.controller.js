@@ -3,6 +3,8 @@ import Course from '../models/course.model.js'
 // Create a new course
 export const createCourse = async (req, res) => {
     try {
+
+      //validate admin
       const userRole = req.user.role
       if(userRole != "Admin"){
         return res.status(500).json({error: 'Unauthorized'})
@@ -48,6 +50,8 @@ export const getCourseById = async (req, res) => {
 // Update a course by ID
 export const updateCourse = async (req, res) => {
   try {
+
+    //validate admin
     const userRole = req.user.role
     if(userRole != "Admin"){
       return res.status(500).json({error: 'Unauthorized'})
@@ -73,6 +77,8 @@ export const updateCourse = async (req, res) => {
 // Delete a course by ID
 export const deleteCourse = async (req, res) => {
   try {
+
+    //validate admin
     const userRole = req.user.role
     if(userRole != "Admin"){
       return res.status(500).json({error: 'Unauthorized'})
